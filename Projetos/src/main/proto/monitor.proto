@@ -1,0 +1,36 @@
+syntax = "proto3";
+package monitor;
+option java_multiple_files = true;
+option java_package = "com.example.monitor.grpc";
+option java_outer_classname = "MonitorProto";
+
+service AuthService {
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Validate(Token) returns (ValidateResponse);
+}
+
+service MonitorService {
+  rpc GetStatus(StatusRequest) returns (StatusResponse);
+}
+
+message LoginRequest { string username = 1; string password = 2; }
+message LoginResponse { string token = 1; bool ok = 2; string message = 3; }
+message Token { string token = 1; }
+message ValidateResponse { bool valid = 1; }
+message StatusRequest { string token = 1; }
+
+message NodeStatus {
+  int32 nodeId = 1;
+  double cpu = 2;   // 0..1
+  double mem = 3;   // 0..1
+  int64 uptimeSec = 4;
+  int64 lamport = 5;
+  bool alive = 6;
+}
+
+message StatusResponse {
+  repeated NodeStatus nodes = 1;
+  int32 leaderId = 2;
+  int64 lclock = 3;
+  string snapshotId = 4;
+}
